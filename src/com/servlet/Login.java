@@ -18,15 +18,18 @@ public class Login extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		final String nameRegex = "^[A-Z]{1}[a-z]{2,}([\\s][A-Z]{1}[a-z]{2,})?$";
+		final String passwordRegex = "^(?=.*\\d)(?=.*[A-Z])(?=.*\\W)(?!.*\\W\\w*\\W)(?!.*\\s).{8,}$";
 		
 		String name = request.getParameter("user");
-		if (name.matches(nameRegex)) {
+		String password = request.getParameter("pwd");
+		if (name.matches(nameRegex) && password.matches(passwordRegex)) {
 			request.setAttribute("user", name);
+			request.setAttribute("pwd", password);
 			request.getRequestDispatcher("LoginSuccess.jsp").forward(request, response);
 		} else {
 			RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
 			PrintWriter out = response.getWriter();
-			out.println("<font color=red>Entered Name is in wrong format. Eg. John Smith</font>");
+			out.println("<font color=red>either name or password is wrong</font>");
 			rd.include(request, response);
 			out.close();
 		}
