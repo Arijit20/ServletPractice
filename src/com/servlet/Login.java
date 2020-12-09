@@ -12,30 +12,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(description = "Login Servlet Testing", 
-            urlPatterns = "/Login", 
-            initParams = {
-		    @WebInitParam(name = "user", value = "arijit"), 
-		    @WebInitParam(name = "password", value = "arijit") 
-		    })
+@WebServlet("/Login")
 public class Login extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String user = request.getParameter("user");
-		String pwd = request.getParameter("pwd");
-		String userID = getServletConfig().getInitParameter("user");
-		String password = getServletConfig().getInitParameter("password");
-		if (userID.equals(user) && password.equals(pwd)) {
-			request.setAttribute("user", user);
+		final String nameRegex = "^[A-Z]{1}[a-z]{2,}([\\s][A-Z]{1}[a-z]{2,})?$";
+		
+		String name = request.getParameter("user");
+		if (name.matches(nameRegex)) {
+			request.setAttribute("user", name);
 			request.getRequestDispatcher("LoginSuccess.jsp").forward(request, response);
 		} else {
 			RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
 			PrintWriter out = response.getWriter();
-			out.println("<font color=red>Either user name or password is wrong</font>");
+			out.println("<font color=red>Entered Name is in wrong format. Eg. John Smith</font>");
 			rd.include(request, response);
 			out.close();
 		}
 	}
-
 }
